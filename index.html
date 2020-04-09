@@ -10,6 +10,7 @@
     
     <button onclick="subscribe()">Subscribe</button>
 
+    <p id="sub"></p>
     <script>
         addEventListener('load', async () => {
             let sw = await navigator.serviceWorker.register('./sw.js');
@@ -22,7 +23,7 @@
                 userVisibleOnly: true,
                 applicationServerKey: 'BAjAFwJK7Tcommh70Jry5fvOuLYLzgJtJVXKKQNpfRUkm3tqpdkI7v7k78FaLwzaiJZB-kFk3sGM8oVSIRvDNug'
             })
-            console.log(JSON.stringify(push))
+            document.getElementById('sub').innerHTML = JSON.stringify(push);
         }
     </script>
 
