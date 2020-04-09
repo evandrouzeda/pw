@@ -1,4 +1,5 @@
 self.addEventListener('push', (e) => {
+    console.log(e)
     var options = {
         body: 'Esse é o corpo da minha notificação',
         icon: 'imagens/icone.png',
