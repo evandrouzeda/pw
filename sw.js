@@ -7,17 +7,7 @@ self.addEventListener('push', (e) => {
             dateOfArrival: Date.now(),
             primaryKey: '2'
         },
-        actions: [{
-                action: 'explore',
-                title: 'Explore esse novo mundo',
-                icon: 'imagens/checkmark.png'
-            },
-            {
-                action: 'close',
-                title: 'Close',
-                icon: 'imagens/xmark.png'
-            }
-        ]
+        
     };
     e.waitUntil(self.registration.showNotification('test message', {}));
 });
