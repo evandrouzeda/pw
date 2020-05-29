@@ -10,20 +10,31 @@
     
     <button onclick="subscribe()">Subscribe</button>
 
-    <p id="sub"></p>
+    <input type="text" name="message" id="msg">
+    <button onclick="send()">Send</button>
+
+    <script src="/socket.io/socket.io.js"></script>
     <script>
         addEventListener('load', async () => {
             let sw = await navigator.serviceWorker.register('./sw.js');
             console.log(sw);
         })
+    </script>
+    <script>
+        const socket = io(window.location.origin)
+
+        function send(){
+            let msg = document.getElementById('msg').value;
+            socket.emit('send', msg)
+        }
 
         async function subscribe() {
             let sw = await navigator.serviceWorker.ready;
             let push = await sw.pushManager.subscribe({
                 userVisibleOnly: true,
-                applicationServerKey: 'BAjAFwJK7Tcommh70Jry5fvOuLYLzgJtJVXKKQNpfRUkm3tqpdkI7v7k78FaLwzaiJZB-kFk3sGM8oVSIRvDNug'
+                applicationServerKey: '<YOUR VAPID KEY THAT WAS GENERATED>' //<============== change this line
             })
-            document.getElementById('sub').innerHTML = JSON.stringify(push);
+            socket.emit('sub',push);
         }
     </script>
 

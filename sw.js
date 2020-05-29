@@ -1,8 +1,8 @@
 self.addEventListener('push', (e) => {
-    console.log(e)
+    console.log(e.data.text())
     var options = {
-        body: 'Esse é o corpo da minha notificação',
-        icon: 'imagens/icone.png',
+        body: 'Description of your notification',
+        icon: '_img/image.png',
         vibrate: [100, 50, 100],
         data: {
             dateOfArrival: Date.now(),
@@ -10,5 +10,5 @@ self.addEventListener('push', (e) => {
         },
         
     };
-    e.waitUntil(self.registration.showNotification('test message', {}));
+    e.waitUntil(self.registration.showNotification(e.data.text(), options));
 });

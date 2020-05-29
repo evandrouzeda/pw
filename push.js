@@ -1,19 +1,50 @@
+//Simple example code to make a push app
 var push = require('web-push');
+var express = require('express');
 
-let vapidKeys = {
-    publicKey: 'BAjAFwJK7Tcommh70Jry5fvOuLYLzgJtJVXKKQNpfRUkm3tqpdkI7v7k78FaLwzaiJZB-kFk3sGM8oVSIRvDNug',
-    privateKey: 'oUWIVGFJrrlYEl9rqxHnLEflwgAf6OizBinzYrJu7Kw'
+var app = express()
+
+//this is used to use static html, making express run in static mode
+app.use(express.static(__dirname))
+
+var server = app.listen(5000, () => {
+    console.log('Server is listen on port 5000...')
+})
+
+var socket = require('socket.io').listen(server);
+
+var subClient = []; //used to care the last client subscription, but you can use for to send to all
+socket.on('connect', (client) => {
+    client.on('sub', (sub) => {
+        subClient.push(sub);
+        console.log('Client Subcribed');
+    })
+
+    client.on('send', (msg) => {
+        send(msg)
+    })
+})
+
+//function that send the notification
+function send(msg) {
+    push.sendNotification(subClient[subClient.length - 1], msg).catch((err) => {
+        if (err.statusCode === 404 || err.statusCode === 410) {
+            console.log('Subscription has expired or is no longer valid...')
+        } else {
+            throw err;
+        }
+    })
 }
 
-push.setVapidDetails('mailto: evandrouzeda@gmail.com', vapidKeys.publicKey, vapidKeys.privateKey)
+//only used on the first time you run this code, to generate de keys. After comment our delete the line below
+console.log(push.generateVAPIDKeys())
 
-let sub = {
-    endpoint: "https://fcm.googleapis.com/fcm/send/eV3FOi_tPtk:APA91bFwJnphjgqn1omcIPGpf8D2UWkDDkY4xjiczFjA2-fT8vNXlkbAn4coomeB6tY-wwez3MU5QGWiXOMzgIkRkLj_EIin2YHpQsCkd3dJgEnvrLQes-o5eHwZQkRHo23jEjhnXNju",
-    expirationTime: null,
-    keys: {
-        p256dh: "BEv3EOsDT9mIPjAm50WgjJEt0IHesKvbrrLBzvTLRqYlrr2g736vznDGR_4NmLjN-GIS_ezelVFDzIz1Gq8JT8I",
-        auth: "8-9NvCvgx685dvrmGPPMdw"
-    }
-};
+//UNCOMMENT ONLY AFTER GENERETE THE KEYS
+/*
+let vapidKeys = {
+    publicKey: '<YOUR VAPID KEY THAT WAS GENERATED>',
+    privateKey: '<SAME THIN>'
+}
 
-push.sendNotification(sub, 'test message')
+push.setVapidDetails('mailto: your@email.com', vapidKeys.publicKey, vapidKeys.privateKey)
+*/
